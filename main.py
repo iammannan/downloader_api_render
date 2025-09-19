@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-import requests, re
+import requests, os, re, subprocess, json, tempfile
 
 app = FastAPI()
 
@@ -11,22 +11,46 @@ URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 def home():
     return {"status": "Bot running on Railway ✅"}
 
+
 @app.post("/webhook")
 async def webhook(request: Request):
     data = await request.json()
-    if "message" not in data:
-        return {"ok": True}
 
-    chat_id = data["message"]["chat"]["id"]
-    text = data["message"].get("text", "")
+    if "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        text = data["message"].get("text", "")
 
-    # Handle /start
-    if text == "/start":
-        reply = "👋 Hi! Send me any link and I’ll reply with it."
-        requests.post(f"{URL}/sendMessage", json={"chat_id": chat_id, "text": reply})
-        return {"ok": True}
+        if text:
+            # find URLs in the text
+            urls = re.findall(r"(https?://\S+)", text)
+            if urls:
+                reply_texts = []
+                for url in urls:
+                    try:
+                        # Run yt-dlp to get direct media link
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmpfile:
+                            subprocess.run(
+                                ["yt-dlp", "-j", url],
+                                stdout=tmpfile,
+                                stderr=subprocess.PIPE,
+                                text=True,
+                                timeout=30
+                            )
+                            tmpfile.flush()
+                            tmpfile.seek(0)
+                            result = json.load(open(tmpfile.name))
 
-    # Echo back links (basic demo)
-    urls = re.findall(r"(https?://\S+)", text)
-    if urls:
-        reply = "🔗 I found these links:\n" + "\n".join
+                        if "url" in result:
+                            reply_texts.append(f"🎬 {url}\n👉 {result['url']}")
+                        else:
+                            reply_texts.append(f"⚠️ Could not extract: {url}")
+                    except Exception as e:
+                        reply_texts.append(f"❌ Error extracting {url}: {str(e)}")
+
+                reply = "\n\n".join(reply_texts)
+                requests.post(f"{URL}/sendMessage", json={"chat_id": chat_id, "text": reply})
+            else:
+                # no URL, just echo
+                requests.post(f"{URL}/sendMessage", json={"chat_id": chat_id, "text": text})
+
+    return {"ok": True}
