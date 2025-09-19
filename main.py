@@ -4,8 +4,8 @@ import requests, re
 app = FastAPI()
 
 # ⚠️ Replace this with your bot token directly
-BOT_TOKEN2 = "7342710360:AAG6RlHdN371oNdLhT5_MlplEvZKXxQ90Mc"
-URL = f"https://api.telegram.org/bot{BOT_TOKEN2}"
+BOT_TOKEN = "7583557362:AAHKdmCRcISo2T_RgR2qFMjeO9flr1OiLV0"
+URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 @app.get("/")
 def home():
