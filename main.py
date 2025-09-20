@@ -56,7 +56,7 @@ async def webhook(request: Request):
                         if "url" in result:
                             reply_texts.append(f"🎬 {url}\n👉 {result['url']}")
                         else:
-                            reply_texts.append(f"⚠️ Could not extract media from: {url}")
+                            reply_texts.append(f"⚠️ Could not extract media from: {url} result: {result}")
 
                     except Exception as e:
                         reply_texts.append(f"❌ {url}\nException: {str(e)}")
