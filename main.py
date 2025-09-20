@@ -33,7 +33,7 @@ async def webhook(request: Request):
                     try:
                         # temp file for JSON output
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmpfile:
-                            cmd = ["yt-dlp", "-j", "--cookies", "cookies.txt", url]
+                            cmd = ["yt-dlp", "-j", url]
 
                             # Add cookies-from-browser
                             cmd.extend(["--cookies-from-browser", BROWSER])
