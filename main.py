@@ -47,7 +47,7 @@ async def webhook(request: Request):
                             )
 
                             if proc.returncode != 0:
-                                # yt-dlp failed → return error
+                                # yt-dlp failed → return errors
                                 error_msg = proc.stderr.strip().split("\n")[-1]
                                 reply_texts.append(f"❌ {url}\nError: {error_msg}")
                                 continue
