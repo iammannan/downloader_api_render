@@ -30,8 +30,7 @@ async def webhook(request: Request):
                         # Run yt-dlp to get direct media link
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmpfile:
                             subprocess.run(
-                                ["yt-dlp", "-j", url],
-                                stdout=tmpfile,
+                                ["yt-dlp", "-j", "--cookies", "cookies/reddit.txt", url],                                stdout=tmpfile,
                                 stderr=subprocess.PIPE,
                                 text=True,
                                 timeout=30
