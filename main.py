@@ -64,6 +64,7 @@ async def webhook(request: Request):
                     except Exception as e:
                         reply_texts.append(f"❌ {url}\nException: {str(e)}")
 
+
                 reply = "\n\n".join(reply_texts)
                 requests.post(f"{URL}/sendMessage", json={"chat_id": chat_id, "text": reply})
             else:
