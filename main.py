@@ -35,9 +35,6 @@ async def webhook(request: Request):
                         with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as tmpfile:
                             cmd = ["yt-dlp", "-j", "--cookies", "biscuit.txt", url]
 
-                            # Add cookies-from-browser
-                            cmd.extend(["--cookies-from-browser", BROWSER])
-
                             proc = subprocess.run(
                                 cmd,
                                 stdout=tmpfile,
